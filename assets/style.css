@@ -1,0 +1,20 @@
+.container{
+  width: 960px;
+  margin: auto;
+}
+h1{
+  font-weight: normal;
+}
+table{
+  margin: auto;
+  border-collapse: collapse;
+}
+th{
+  font-weight: normal;
+  background:lavender;
+}
+th,td{
+  border: 1px solid #333;
+  padding: 10px;
+  text-align: center;
+}
