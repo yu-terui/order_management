@@ -10,7 +10,7 @@
     <body>
         <div class="container">
             <h1>商品注文顧客管理システム</h1>
-            <table id="table">
+            <table id="orders_table">
                 <tr>
                     <th>注文番号</th>
                     <th>注文者</th>
@@ -22,10 +22,13 @@
                     <th>価格</th>
                 </tr>
             </table>
+            <div id="calendar">
+            </div>
         </div>
         <script>
             const orders = JSON.parse('<%= JSON.stringify(orders) %>'.replace(/&#34;/g, '"'));
-            let table = document.getElementById("table");
+            // 一覧リスト
+            let orders_table = document.getElementById("orders_table");
             for (let i = 0; i < orders.length; i++) {
                 let tr = document.createElement("tr");
                 let td_num = document.createElement("td");
@@ -52,10 +55,65 @@
                 tr.append(td_product)
                 tr.append(td_amount)
                 tr.append(td_price)
-                table.append(tr)
+                orders_table.append(tr)
             }
-
-
+            // カレンダー
+            let calendar = document.getElementById("calendar");
+            const weeks = ['日', '月', '火', '水', '木', '金', '土']
+            const dates = new Date()
+            const year = dates.getFullYear()
+            const month = dates.getMonth() + 1;
+            const date = dates.getDate();
+            const startDate = new Date(year, month - 1, 1);//月の最初の日付
+            const endDate = new Date(year, month, 0);//月の最後の日付
+            const endDateCount = endDate.getDate(); //月の末日
+            const startDay = startDate.getDay();//月の最初の日の曜日を取得
+            let dayCount = 1;//日にちのカウント
+            let calendarHtml = '' //htmlを組み立てる変数
+            //カレンダーのHTML構造
+            calendarHtml += '<table id="calendar_table"><tr>'
+            // 横列
+            for (let i = 0; i < weeks.length; i++) {
+                calendarHtml += '<th>' + weeks[i] + '</th>'
+            }
+            calendarHtml += '</tr>'
+            //縦列
+            for (let w = 0; w < 6; w++) {
+                calendarHtml += '<tr>'
+                for (let d = 0; d < 7; d++) {
+                    if (w == 0 && d < startDay) {
+                        // 1行目で1日の曜日の前
+                        calendarHtml += '<td></td>'
+                    } else if (dayCount > endDateCount) {
+                        // 末尾の日付を超える
+                        calendarHtml += '<td></td>'
+                    }
+                    // else if (dayCount === date) {
+                    //     // 今日の日付の色を変える
+                    //     calendarHtml += '<td id ="today">' + dayCount + '</td>'
+                    //     dayCount++
+                    // }
+                    else {
+                        calendarHtml += '<td>' + dayCount + '</td>'
+                        dayCount++
+                    }
+                }
+                calendarHtml += '</tr>'
+            }
+            calendarHtml += '</table>'
+            calendar.innerHTML = calendarHtml;
+            // DBの日付とカレンダーの日付、照合
+            let calendar_table = document.getElementById("calendar_table")
+            let cells = calendar_table.querySelectorAll('td');
+            cells.forEach(function (cell) {
+                for (let i = 0; i < orders.length; i++) {
+                let order_dates = orders[i].date;
+                let order_date = order_dates.split("-")
+                if(cell.textContent==order_date[2]){
+                    cell.classList.add("order_date")
+                    cell.innerHTML = order_date[2] + `<br>${orders[i].person}`
+                }
+            }});
         </script>
     </body>
 </html>
