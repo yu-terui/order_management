@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="ja">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>商品注文顧客管理システム</title>
+        <meta name="description" content="商品注文顧客管理システム">
+        <link rel="stylesheet" href="../assets/style.css">
+    </head>
+    <body>
+        <div class="container">
+            <h1>商品注文顧客管理システム</h1>
+            <table id="table">
+                <tr>
+                    <th>注文番号</th>
+                    <th>注文者</th>
+                    <th>連絡先</th>
+                    <th>住所</th>
+                    <th>日付</th>
+                    <th>商品</th>
+                    <th>個数</th>
+                    <th>価格</th>
+                </tr>
+            </table>
+        </div>
+        <script>
+            const orders = JSON.parse('<%= JSON.stringify(orders) %>'.replace(/&#34;/g, '"'));
+            let table = document.getElementById("table");
+            for (let i = 0; i < orders.length; i++) {
+                let tr = document.createElement("tr");
+                let td_num = document.createElement("td");
+                let td_person = document.createElement("td");
+                let td_phone = document.createElement("td");
+                let td_address = document.createElement("td");
+                let td_date = document.createElement("td");
+                let td_product = document.createElement("td");
+                let td_amount = document.createElement("td");
+                let td_price = document.createElement("td");
+                td_num.innerHTML = `${orders[i].num}`
+                td_person.innerHTML = `${orders[i].person}`
+                td_phone.innerHTML = `${orders[i].phone}`
+                td_address.innerHTML = `${orders[i].address}`
+                td_date.innerHTML = `${orders[i].date}`
+                td_product.innerHTML = `${orders[i].product}`
+                td_amount.innerHTML = `${orders[i].amount}`
+                td_price.innerHTML = `${orders[i].price}`
+                tr.append(td_num)
+                tr.append(td_person)
+                tr.append(td_phone)
+                tr.append(td_address)
+                tr.append(td_date)
+                tr.append(td_product)
+                tr.append(td_amount)
+                tr.append(td_price)
+                table.append(tr)
+            }
+
+
+        </script>
+    </body>
+</html>
