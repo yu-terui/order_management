@@ -1,25 +1,25 @@
 // CommonJSで関連パッケージの読み込み
-const express = require('express');
-const morgan = require('morgan');
+const express = require("express");
+const morgan = require("morgan");
 const ejs = require("ejs");
 const app = express(); //インスタンス化してappに代入
 
 // アクセス先のポート番号を定義
-const port = 3000
+const port = 3000;
 
 // JSオブジェクト形式に変換
-app.use(express.urlencoded({ extend: true }))
+app.use(express.urlencoded({ extend: true }));
 
 //req.bodyの中に送信したデータが保存される
 app.set("view engine", "ejs"); //テンプレートエンジンをEJSに
 
-const mysql2 = require('mysql2');
+const mysql2 = require("mysql2");
 const con = mysql2.createConnection({
   host: "localhost",
   user: "root",
   password: "rootroot",
   database: "order_management",
-  dateStrings: 'date',
+  dateStrings: "date",
   multipleStatements: true,
 });
 
@@ -37,7 +37,7 @@ app.get("/", (req, res) => {
   con.query(sql, function (err, result) {
     if (err) throw err;
     res.render("index", {
-      orders: result
+      orders: result,
     });
   });
 });
