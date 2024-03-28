@@ -24,6 +24,10 @@
             </table>
             <div id="calendar">
             </div>
+            <div id="easyModal" class="modal">
+                <div class="closeContain"><span class="modalClose">×</span></div>
+                <table class="modalContent"></table>
+            </div>
         </div>
         <script>
             const orders = JSON.parse('<%= JSON.stringify(orders) %>'.replace(/&#34;/g, '"'));
@@ -87,13 +91,7 @@
                     } else if (dayCount > endDateCount) {
                         // 末尾の日付を超える
                         calendarHtml += '<td></td>'
-                    }
-                    // else if (dayCount === date) {
-                    //     // 今日の日付の色を変える
-                    //     calendarHtml += '<td id ="today">' + dayCount + '</td>'
-                    //     dayCount++
-                    // }
-                    else {
+                    } else {
                         calendarHtml += '<td>' + dayCount + '</td>'
                         dayCount++
                     }
@@ -107,13 +105,60 @@
             let cells = calendar_table.querySelectorAll('td');
             cells.forEach(function (cell) {
                 for (let i = 0; i < orders.length; i++) {
-                let order_dates = orders[i].date;
-                let order_date = order_dates.split("-")
-                if(cell.textContent==order_date[2]){
-                    cell.classList.add("order_date")
-                    cell.innerHTML = order_date[2] + `<br>${orders[i].person}`
+                    let order_dates = orders[i].date;
+                    let order_date = order_dates.split("-")
+                    if (cell.textContent == order_date[2]) {
+                        cell.classList.add("order_date")
+                        cell.innerHTML = order_date[2] + `<br>${orders[i].person}`
+                    }
                 }
-            }});
+            });
+            // モーダル表示
+            const modal = document.getElementById('easyModal');
+            const modalContent = document.getElementsByClassName('modalContent')[0];
+            const buttonClose = document.getElementsByClassName('modalClose')[0];
+            document.addEventListener("click", function (e) {
+                // 日付クリックで詳細情報の表示
+                if (e.target.classList.contains("order_date")) {
+                    modal.style.display = 'block';
+                    let count = {}
+                    for (let i = 0; i < orders.length; i++) {
+                        let order_dates = orders[i].date;
+                        let order_date = order_dates.split("-")
+                        // クリックされた日付=ordersの日付→詳細情報をモーダルに表示
+                        if (e.target.textContent.replace(/[^0-9]/g, '') == order_date[2]) {
+                            console.log(orders[i])// ここでは２つとも取れてる
+                            modalContent.innerHTML
+                                = ` <tr><th>注文者：</th><td>${orders[i].person}</td></tr>
+                            <tr><th>連絡先：</th><td>${orders[i].phone}</td></tr>
+                            <tr><th>住所：</th><td>${orders[i].address}</td></tr>
+                            <tr><th>商品：</th><td>${orders[i].product}</td></tr>
+                            <tr><th>個数：</th><td>${orders[i].amount}</td></tr>
+                            <tr><th>価格：</th><td>${orders[i].price}</td></tr>`
+                        }
+                        // 日付重複チェック
+                        let key = orders[i].date;
+                        count[key] = (count[key] ? count[key] + 1 : 1)
+                    }
+                        for (let key in count) {
+                            let key_split = key.split("-")
+                            // クリックされた日付と、重複した日付の照合
+                            if (e.target.textContent.replace(/[^0-9]/g, '') == key_split[2] && count[key] == 2) {
+                                modalContent.innerHTML +=
+                                    `<tr><th class="border">注文者：</th><td class="border">${orders[1].person}</td></tr>
+                                    <tr><th>連絡先：</th><td>${orders[1].phone}</td></tr>
+                                    <tr><th>住所：</th><td>${orders[1].address}</td></tr>
+                                    <tr><th>商品：</th><td>${orders[1].product}</td></tr>
+                                    <tr><th>個数：</th><td>${orders[1].amount}</td></tr>
+                                    <tr><th>価格：</th><td>${orders[1].price}</td></tr>`
+                        }
+                    };
+                }
+            })
+            // モーダル閉じる
+            buttonClose.addEventListener('click', function modalClose() {
+                modal.style.display = 'none';
+            })
         </script>
     </body>
 </html>
