@@ -1,3 +1,4 @@
+/* global */
 .container {
   width: 960px;
   margin: auto;
@@ -7,18 +8,19 @@ p{
   margin: 0;
   padding: 0;
 }
-h1 {
+h1, h2 {
   font-weight: normal;
 }
 th {
   font-weight: normal;
 }
+/* orders_table */
 #orders_table {
   margin: auto;
   border-collapse: collapse;
 }
 #orders_table th {
-  background: lavender;
+  background: rgb(200, 228, 251);
 }
 #orders_table th,
 #orders_table td {
@@ -26,8 +28,29 @@ th {
   padding: 10px;
   text-align: center;
 }
-#calendar_table {
+/* calendar */
+#calendar_header{
+  text-align: center;
   padding-top: 30px;
+}
+#calendar_header h2{
+  display: inline;
+}
+#calendar_header button{
+  display: inline;
+  color: #fff;
+  font-size: 150%;
+  background: lightslategray;
+  padding:3px 10px;
+  margin: 10px;
+  border: none;
+  border-radius:50%;
+}
+#calendar_header button:hover{
+  cursor: pointer;
+  opacity: .8;
+}
+#calendar_table {
   margin: auto;
   text-align: center;
 }
@@ -42,6 +65,12 @@ th {
 }
 #calendar_table .order_date:hover{
   cursor: pointer;
+  opacity: .8;
+}
+#calendar_table .grid{
+  display:grid;
+  grid-template-columns:1fr 1fr 1fr 1fr 1fr 1fr 1fr ;
+  gap: 5px;
 }
 .modal {
   display: none;

@@ -23,6 +23,12 @@
                 </tr>
             </table>
             <div id="calendar">
+                <div id="calendar_header">
+                    <button id="prev" type="button">&lt;</button>
+                    <h2></h2>
+                    <button id="next" type="button">&gt;</button>
+                </div>
+                <div id="calendar_body"></div>
             </div>
             <div id="easyModal" class="modal">
                 <div class="closeContain"><span class="modalClose">×</span></div>
@@ -62,84 +68,63 @@
                 orders_table.append(tr)
             }
             // カレンダー
-            let calendar = document.getElementById("calendar");
-            const weeks = ['日', '月', '火', '水', '木', '金', '土']
-            const dates = new Date()
-            const year = dates.getFullYear()
-            const month = dates.getMonth() + 1;
-            const date = dates.getDate();
-            const startDate = new Date(year, month - 1, 1);//月の最初の日付
-            const endDate = new Date(year, month, 0);//月の最後の日付
-            const endDateCount = endDate.getDate(); //月の末日
-            const startDay = startDate.getDay();//月の最初の日の曜日を取得
-            let dayCount = 1;//日にちのカウント
-            let calendarHtml = '' //htmlを組み立てる変数
-            //カレンダーのHTML構造
-            calendarHtml += '<table id="calendar_table"><tr>'
-            // 横列
-            for (let i = 0; i < weeks.length; i++) {
-                calendarHtml += '<th>' + weeks[i] + '</th>'
-            }
-            calendarHtml += '</tr>'
-            //縦列
-            for (let w = 0; w < 6; w++) {
-                calendarHtml += '<tr>'
-                for (let d = 0; d < 7; d++) {
-                    if (w == 0 && d < startDay) {
-                        // 1行目で1日の曜日の前
-                        calendarHtml += '<td></td>'
-                    } else if (dayCount > endDateCount) {
-                        // 末尾の日付を超える
-                        calendarHtml += '<td></td>'
-                    } else {
-                        calendarHtml += '<td>' + dayCount + '</td>'
-                        dayCount++
-                    }
+            let weeks = ['日', '月', '火', '水', '木', '金', '土']
+            let dates = new Date()
+            let year = dates.getFullYear()
+            let month = dates.getMonth() + 1
+            // カレンダー表示
+            function showCalendar(year, month) {
+                let calendarHtml = createCalendar(year, month)
+                let sec = document.createElement('section')
+                sec.innerHTML = calendarHtml
+                document.querySelector("#calendar_body").appendChild(sec)
+                month++
+                if (month > 12) {
+                    year++
+                    month = 1
                 }
-                calendarHtml += '</tr>'
-            }
-            calendarHtml += '</table>'
-            calendar.innerHTML = calendarHtml;
-            // DBの日付とカレンダーの日付、照合
-            let calendar_table = document.getElementById("calendar_table")
-            let cells = calendar_table.querySelectorAll('td');
-            cells.forEach(function (cell) {
-                for (let i = 0; i < orders.length; i++) {
-                    let order_dates = orders[i].date;
-                    let order_date = order_dates.split("-")
-                    if (cell.textContent == order_date[2]) {
-                        cell.classList.add("order_date")
-                        cell.innerHTML = order_date[2] + `<br>${orders[i].person}`
-                    }
-                }
-            });
-            // モーダル表示
-            const modal = document.getElementById('easyModal');
-            const modalContent = document.getElementsByClassName('modalContent')[0];
-            const buttonClose = document.getElementsByClassName('modalClose')[0];
-            document.addEventListener("click", function (e) {
-                // 日付クリックで詳細情報の表示
-                if (e.target.classList.contains("order_date")) {
-                    modal.style.display = 'block';
-                    let count = {}
+                // 日付部分に注文者表示
+                // DBの日付とカレンダーの日付、照合
+                let calendar_table = document.getElementById("calendar_table")
+                let cells = calendar_table.querySelectorAll('td');
+                let cell_month = document.getElementsByTagName("h2")[0].textContent
+                let cell_month_split = cell_month.split("/")
+                cells.forEach(function (cell) {
                     for (let i = 0; i < orders.length; i++) {
                         let order_dates = orders[i].date;
                         let order_date = order_dates.split("-")
-                        // クリックされた日付=ordersの日付→詳細情報をモーダルに表示
-                        if (e.target.textContent.replace(/[^0-9]/g, '') == order_date[2]) {
-                            console.log(orders[i])// ここでは２つとも取れてる
-                            modalContent.innerHTML
-                                = ` <tr><th>注文者：</th><td>${orders[i].person}</td></tr>
+                        if (cell_month_split[1] == order_date[1].replace(/^0+/, '') && cell.textContent == order_date[2]) {
+                            cell.classList.add("order_date")
+                            cell.innerHTML = order_date[2] + `<br>${orders[i].person}`
+                        }
+                    }
+                });
+                // モーダル表示
+                const modal = document.getElementById('easyModal');
+                const modalContent = document.getElementsByClassName('modalContent')[0];
+                const buttonClose = document.getElementsByClassName('modalClose')[0];
+                document.addEventListener("click", function (e) {
+                    // 日付クリックで詳細情報の表示
+                    if (e.target.classList.contains("order_date")) {
+                        modal.style.display = 'block';
+                        let count = {}
+                        for (let i = 0; i < orders.length; i++) {
+                            let order_dates = orders[i].date;
+                            let order_date = order_dates.split("-")
+                            // クリックされた日付=ordersの日付→詳細情報をモーダルに表示
+                            if (e.target.textContent.replace(/[^0-9]/g, '') == order_date[2]) {
+                                modalContent.innerHTML
+                                    = ` <tr><th>注文者：</th><td>${orders[i].person}</td></tr>
                             <tr><th>連絡先：</th><td>${orders[i].phone}</td></tr>
                             <tr><th>住所：</th><td>${orders[i].address}</td></tr>
                             <tr><th>商品：</th><td>${orders[i].product}</td></tr>
                             <tr><th>個数：</th><td>${orders[i].amount}</td></tr>
                             <tr><th>価格：</th><td>${orders[i].price}</td></tr>`
+                            }
+                            // 日付重複チェック
+                            let key = orders[i].date;
+                            count[key] = (count[key] ? count[key] + 1 : 1)
                         }
-                        // 日付重複チェック
-                        let key = orders[i].date;
-                        count[key] = (count[key] ? count[key] + 1 : 1)
-                    }
                         for (let key in count) {
                             let key_split = key.split("-")
                             // クリックされた日付と、重複した日付の照合
@@ -151,14 +136,77 @@
                                     <tr><th>商品：</th><td>${orders[1].product}</td></tr>
                                     <tr><th>個数：</th><td>${orders[1].amount}</td></tr>
                                     <tr><th>価格：</th><td>${orders[1].price}</td></tr>`
-                        }
-                    };
+                            }
+                        };
+                    }
+                })
+                // モーダル閉じる
+                buttonClose.addEventListener('click', function modalClose() {
+                    modal.style.display = 'none';
+                })
+            }
+            // カレンダー作成
+            function createCalendar(year, month) {
+                let startDate = new Date(year, month - 1, 1);//月の最初の日付
+                let endDate = new Date(year, month, 0);//月の最後の日付
+                let endDateCount = endDate.getDate(); //月の末日
+                let lastMonthEndDate = new Date(year, month - 1, 0) // 前月の最後の日付
+                let lastMonthDateCount = lastMonthEndDate.getDate() // 前月の末日
+                let startDay = startDate.getDay();//月の最初の日の曜日を取得
+                let dayCount = 1;//日にちのカウント
+                // 見出し
+                let h2 = document.getElementsByTagName("h2")[0]
+                h2.innerHTML = year + "/" + month
+                // HTML構造
+                let calendarHtml = '' //htmlを組み立てる変数
+                calendarHtml += '<table id="calendar_table"><tr class="grid">'
+                // 横列
+                for (let i = 0; i < weeks.length; i++) {
+                    calendarHtml += '<th>' + weeks[i] + '</th>'
                 }
-            })
-            // モーダル閉じる
-            buttonClose.addEventListener('click', function modalClose() {
-                modal.style.display = 'none';
-            })
+                calendarHtml += '</tr>'
+                //縦列
+                for (let w = 0; w < 6; w++) {
+                    calendarHtml += '<tr class="grid">'
+                    for (let d = 0; d < 7; d++) {
+                        if (w == 0 && d < startDay) {
+                            // 1行目で1日の曜日の前
+                            calendarHtml += '<td></td>'
+                        } else if (dayCount > endDateCount) {
+                            // 末尾の日付を超える
+                            calendarHtml += '<td></td>'
+                        } else {
+                            calendarHtml += '<td>' + dayCount + '</td>'
+                            dayCount++
+                        }
+                    }
+                    calendarHtml += '</tr>'
+                }
+                calendarHtml += '</table>'
+                return calendarHtml
+            }
+            // 前後の月へ移動
+            function moveCalendar(e) {
+                document.querySelector("#calendar_body").innerHTML = ''
+                if (e.target.id === "prev") {
+                    month--
+                    if (month < 1) {
+                        year--
+                        month = 12
+                    }
+                }
+                if (e.target.id === "next") {
+                    month++
+                    if (month > 12) {
+                        year++
+                        month = 1
+                    }
+                }
+                showCalendar(year, month)
+            }
+            document.querySelector('#prev').addEventListener('click', moveCalendar)
+            document.querySelector('#next').addEventListener('click', moveCalendar)
+            showCalendar(year, month)
         </script>
     </body>
 </html>
