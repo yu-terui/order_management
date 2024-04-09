@@ -1,33 +1,88 @@
+/* global */
 .container {
   width: 960px;
   margin: auto;
   color: #333;
 }
+a{
+  text-decoration: none;
+}
 p{
   margin: 0;
   padding: 0;
 }
-h1 {
+h1, h2 {
+  padding: 0;
+  margin: 0;
+  padding-bottom: 10px;
   font-weight: normal;
 }
 th {
   font-weight: normal;
 }
-#orders_table {
+section+section{
+  padding-top: 30px;
+}
+/* orders_table */
+#orders_section{
+  text-align: right;
+}
+#orders_section h2{
+  text-align: center;
+}
+#orders_section #orders_table {
   margin: auto;
   border-collapse: collapse;
+  text-align: center;
 }
-#orders_table th {
-  background: lavender;
+#orders_section #orders_table th {
+  background: rgb(200, 228, 251);
 }
-#orders_table th,
-#orders_table td {
+#orders_section #orders_table th,
+#orders_section #orders_table td {
   border: 1px solid #333;
   padding: 10px;
   text-align: center;
 }
-#calendar_table {
+#orders_section #add_info{
+  margin: 10px;
+  border: none;
+  background:rgb(78, 162, 231);
+  padding: 10px 20px;
+  border-radius: 10px;
+  font-size: 110%;
+}
+#orders_section #add_info a{
+  display: block;
+  color: #fff;
+}
+#add_info:hover{
+cursor: pointer;
+opacity:.7;
+}
+/* calendar */
+#calendar_header{
+  text-align: center;
   padding-top: 30px;
+}
+#calendar_header h2{
+  display: inline;
+}
+#calendar_header button{
+  display: inline;
+  color: #fff;
+  font-size: 150%;
+  background: lightslategray;
+  padding:3px 10px;
+  margin: 10px;
+  border: none;
+  border-radius:50%;
+}
+#calendar_header button:hover{
+  cursor: pointer;
+  opacity: .8;
+}
+#calendar_table {
   margin: auto;
   text-align: center;
 }
@@ -42,6 +97,12 @@ th {
 }
 #calendar_table .order_date:hover{
   cursor: pointer;
+  opacity: .8;
+}
+#calendar_table .grid_7{
+  display:grid;
+  grid-template-columns:1fr 1fr 1fr 1fr 1fr 1fr 1fr ;
+  gap: 5px;
 }
 .modal {
   display: none;
@@ -82,6 +143,34 @@ th {
 }
 .border{
   border-top: 1px dotted #555;
+}
+/* add */
+#add_form{
+  text-align: center;
+}
+#add_form .grid_2{
+  display: grid;
+  grid-template-columns: 1fr 4fr;
+  width: 500px;
+  gap: 10px;
+  margin: auto;
+  text-align: left;
+}
+#add_form .grid_2 input{
+  padding: 5px;
+}
+#add_btn{
+  margin: 10px;
+  border: none;
+  color: #fff;
+  background:rgb(78, 162, 231);
+  padding: 5px 20px;
+  border-radius: 10px;
+  font-size: 110%;
+}
+#add_btn:hover{
+cursor: pointer;
+opacity:.7;
 }
 @media screen and (max-width: 768px) {
   .container {
